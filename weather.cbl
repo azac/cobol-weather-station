@@ -23,24 +23,28 @@
        file section.
 
        fd  tempfile-for-location.
-       01  tempfile-for-location-record pic x(255).
+       01  tempfile-for-location-record   pic x(255).
 
        fd  tempfile-for-weather.
-       01  tempfile-for-weather-record pic x(255).
+       01  tempfile-for-weather-record    pic x(255).
 
        working-storage section.
 
-       01 location pic x(255).
-       01 request-url pic x(1024).
+       01  weather-api-key                pic x(255) 
+                                          value "pksfrqzus63xbb34yt4dt5vq".
 
-       01 return-value pic 9(8) comp value zeroes.
+       01  location                       pic x(255).
+       01  request-url                    pic x(1024).
 
-       01  tempfile-for-location-name pic x(64) value './data.tmp'.
-       01  tempfile-for-location-status pic x(2).
+       01  return-value                   pic 9(8) comp value zeroes.
 
-       01  tempfile-for-weather-name pic x(64) value './data2.tmp'.
-       01  tempfile-for-weather-status pic x(2).
+       01  tempfile-for-location-name     pic x(64) value './data.tmp'.
+       01  tempfile-for-location-status   pic x(2).
 
+       01  tempfile-for-weather-name      pic x(64) value './data2.tmp'.
+       01  tempfile-for-weather-status    pic x(2).
+
+       01  weather-result pic x(1024).
 
        01  location-columns.
 
@@ -76,9 +80,6 @@
            03  visibility      pic x(100).
            03  pressure        pic x(100).
            03  cloudcover      pic x(100).
-
-
-        01 weather-result pic x(1024).
 
 
 
@@ -132,7 +133,9 @@
                 function concatenate(
                             "curl -s 'http://api.worldweatheronline.com/free/v1/weather.ashx?q=";
                             function trim(location);
-                            "&format=csv&num_of_days=0&show_comments=no&key=pksfrqzus63xbb34yt4dt5vq' >data2.tmp")
+                            "&format=csv&num_of_days=0&show_comments=no&key=";
+                            function trim(weather-api-key);
+                            "' >data2.tmp")
                 to request-url.
 
             call "system" using function trim(request-url).
@@ -180,7 +183,8 @@
         display function trim(weather-result).
 
 
-
+        *> helper function for file status from: 
+        *> http://sourceforge.net/p/open-cobol/discussion/2526793/thread/1183a23c/
 
         identification division.
         program-id. checkfilestatus.
@@ -248,7 +252,7 @@
            display display-message
            stop run
            .
-           
+
       end program checkfilestatus.
 
       end program weather.
