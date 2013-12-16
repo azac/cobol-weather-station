@@ -120,7 +120,7 @@
                             function trim(country-name)) 
                 to location.
 
-              display "Location: " function trim(location). 
+            display "Location: " function trim(location). 
 
             close tempfile-for-location.
 
